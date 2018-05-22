@@ -1,0 +1,275 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第五讲：递归及其数学基础}
+\me{廖玺然}{171860647}{计算机科学与技术系}
+\date{2018 年 4 月 4 日}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginthishw	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[CS: 4.1.16]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  An alternate version of the Ear Lemma states that a triangulated polygon 
+  is either a triangle with three ears or has at least at least two ears.
+  (This version does not specify that the ears are nonadjacent.) What happens 
+  if we try proving this by induction, using the same decomposition that we 
+  used in proving the Ear Lemma?
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+
+\begin{solution}
+  If the original polygon is larger than a triangle, and the two separated 
+  polygons are both larger than a triangle, then according to the statement, 
+  both of them may have two adjacent ears, and the original diagnal may be 
+  incident to all of them, in this case we cannot find any ears in the original 
+  polygon, which means the decomposition used before does not work.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 4.1.17]
+  There is a relationship between the number of vertices in a polygon and 
+  the number of triangles in any triangulation of that polygon. State this 
+  relationship and prove it by induction.
+\end{problem}
+
+\begin{solution}
+  Denote the number of vertices in a polygon as $n$, the number of triangles 
+  in a triangulation of that polygon is $f(n)$, then $f(n) = n - 2.$\\
+  Proof.\\
+  for $n = 3$, we can easily point out that $f(n) = 1 = n - 2$;\\
+  suppose for $3 \leq m < n$, it holds that $f(n) = n - 2$, then for $n$,
+  we can split the polygon into two smaller polygons that have $a$ vertices 
+  and $b$ vertices respectively, and there are three obvious properties 
+  between $a,b,n$:\\
+  1) $a < n,~b < n$;\\
+  2) $a + b = n + 2$;\\
+  3) $f(a) + f(b) = f(n)$;\\
+  according to the induction hypothesis, $f(a) = a - 2,~f(b) = b - 2$, so 
+  we find that $f(n) = f(a) + f(b) = a + b - 4 = n - 2$,\\
+  thus it hols for all $n \geq 3$ that $f(n) = n - 2$. 
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[CS: 4.2.8]
+  At the end of each year, a state fish hatchery puts 2000 fish into a lake. 
+  The number of fish in the lake at the beginning of the year doubles by the 
+  end of the year due to reproduction. Give a recurrence for the number of 
+  fish in the lake after $n$ years, and solve the recurrence.	
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  Denote the number of fish after $n$ years as $f(n)~(n \geq 1)$, the number 
+  of fish at the start time (the beginning of the year) as $f(0)$, then we 
+  have:\\
+  $f(n) = 2f(n - 1) + 2000$;\\
+  $f(n) + k = 2(f(n - 1) + 1000 + k/2)$;\\
+  let $k = 1000 + k/2$, we get that $k = 2000$, then\\
+  $f(n) + 2000 = 2(f(n - 1) + 2000)$,\\
+  $f(n) + 2000 = 2^{n}(f(0) + 2000)$,\\
+  $f(n) = 2^{n}f(0) + 2000(2^{n} - 1)$.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 4.2.11]
+  Solve the recurrence $T(n) = 2T(n - 1) + n2^{n}$, with the initial condition 
+  $T(0) = 1$.
+\end{problem}
+
+\begin{solution}
+  since $T(n) = 2T(n - 1) + n2^{n}$, we have
+  \begin{align}
+    T(n) & = 2^{n}T(0) + \sum_{i = 1}^{n} 2^{n - i} \cdot i2^{i} \notag \\
+         & = 2^{n} + 2^{n} \cdot \frac{n(n + 1)}{2} \notag \\
+         & = 2^{n - 1}(n^{2} + n + 2) \notag
+  \end{align}
+\end{solution}
+%%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 4.5.9]
+  Draw recursion trees, and use them to find big $\Theta$ bounds on the solutions 
+  to the following recurrences. For each, assume that $T(1) = 1$ and that $n$ 
+  is a power of the appropriate integer.\\
+  a. $T(n) = 8T(n/2) + n$\\
+  b. $T(n) = 8T(n/2) + n^{3}$\\
+  c. $T(n) = 3T(n/2) + n$\\
+  d. $T(n) = T(n/4) + 1$\\
+  e. $T(n) = 3T(n/3) + n^{2}$
+\end{problem}
+
+\begin{solution}
+  a. \fignocaption{width = 1.0\textwidth}{figs/tree_1}
+  $T(n) = n^{3} + n \sum_{i = 0}^{\text{log}_{2}n - 1} 4^{i} = n^{3} + \frac{1}{3} (n^{3} - n) 
+  = \Theta (n^{3})$.\\
+  b. \fignocaption{width = 1.0\textwidth}{figs/tree_2}
+  $T(n) = n^{3} + \sum_{i = 0}^{n = \text{log}_{2}n - 1} n^{3} = n^{3}(\text{log}_{2}n + 1) 
+  = \Theta (n^{3}\text{log}_{2}n)$.\\
+  c. \fignocaption{width = 0.7\textwidth}{figs/tree_3}
+  $T(n) = 3^{\text{log}_{2}n} + n \sum_{i = 0}^{\text{log}_{2}n - 1} (\frac{3}{2})^{i} 
+  = n^{\text{log}_{2}3} + 2(n^{\text{log}_{2}3} - n) = \Theta (n^{\text{log}_{2}3})$.\\
+  d. \fignocaption{width = 0.7\textwidth}{figs/tree_4}
+  $T(n) = 1 + \text{log}_{4}n = 1 + \frac{1}{2} \text{log}_{2}n = \Theta (\text{log}_{2}n)$.\\
+  e. \fignocaption{width = 0.7\textwidth}{figs/tree_5}
+  $T(n) = n + n^{2}\sum_{i = 0}^{\text{log}_{3}n - 1} \frac{1}{3^{i}} = n + \frac{3}{2}(n^{2} - n) 
+  = \Theta (n^{2})$.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 4.4.1]
+  Use the master theorem to give big $\Theta$ bounds on the solutions to 
+  the following recurrences. For each, assume that $T(0) = 1$ and that $n$ 
+  is a power of the appropriate integer.\\
+  a. $T(n) = 8T(n/2) + n$\\
+  b. $T(n) = 8T(n/2) + n^{3}$\\
+  c. $T(n) = 3T(n/2) + n$\\
+  d. $T(n) = T(n/4) + 1$\\
+  e. $T(n) = 3T(n/3) + n^{2}$
+\end{problem}
+
+\begin{solution}
+  a. $\text{log}_{b}a = \text{log}_{2}8 = 3 > 1$, thus $T(n) = \Theta (n^{3})$.\\
+  b. $\text{log}_{b}a = \text{log}_{2}8 = 3 = c$, thus $T(n) = \Theta (n^{3}\text{log}~n)$.\\
+  c. $\text{log}_{b}a = \text{log}_{2}3 > 1$, thus $T(n) = \Theta (n^{\text{log}_{2}3})$.\\
+  d. $\text{log}_{b}a = \text{log}_{4}1 = 0 = c$, thus $T(n) = \Theta (\text{log}~n)$.\\
+  e. $\text{log}_{b}a = \text{log}_{3}3 = 1 < 2$, thus $T(n) = \Theta (n^{2})$.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 4.4.6]
+  Extend the proof of the preliminary version of the master theorem to the 
+  case $T(1) = d$.
+\end{problem}
+
+\begin{solution}
+  In Case 1, $T(n) = a^{\text{log}_{b}n}d + n^{c}\sum_{i = 0}^{\text{log}_{b}n - 1} (\frac{a}{b^{c}})^{i} 
+  = d\cdot n^{\text{log}_{b}a} + \Theta (n^{c}) = \Theta (n^{c})$;\\
+  In Case 2, $T(n) = a^{\text{log}_{b}n}d + n^{c}\sum_{i = 0}^{\text{log}_{b}n - 1} (\frac{a}{b^{c}})^{i} 
+  = d\cdot n^{c} + \Theta (n^{c} \text{log}~n) = \Theta (n^{c} \text{log}~n)$;\\
+  In Case 3, $T(n) = a^{\text{log}_{b}n}d + n^{c}\sum_{i = 0}^{\text{log}_{b}n - 1} (\frac{a}{b^{c}})^{i} 
+  = d\cdot n^{\text{log}_{b}a} + \Theta (n^{\text{log}_{b}a}) = \Theta (n^{\text{log}_{b}a})$.\\
+  Proof completed.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 4.5.8]
+  Show by induction that
+  \[ T(n) = 
+  \begin{cases}
+    8T(n/2) + n\text{ log }n & \text{if } n > 1, \\
+    d & \text{if } n = 1,
+  \end{cases} \]
+  has $T(n) = O(n^{3})$ for any solution $T(n)$.
+\end{problem}
+
+\begin{solution}
+  Suppose $T(n) \leq c_{1}n^{3} - c_{2}n^{2}$ for any $n \geq 1$.\\
+  For $n = 1$, $c_{1}n^{3} - c_{2}n^{2} = c_{1} - c_{2}$, if $c_{1} - c_{2} \geq d$, 
+  then $T(1) \leq c_{1}1^{3} - c_{2}1^{2}$;\\
+  Suppose for any $1 \leq k < n$, $T(k) \leq c_{1}k^{3} - c_{2}l^{2}$, then 
+  for $n$, we have
+  \begin{align}
+    T(n) & = 8T(n/2) + n \text{ log } n \notag \\
+         & \leq 8(c_{1}(\frac{n}{2})^{3} - c_{2}(\frac{n}{2})^{2}) + n \text{ log } n \notag \\
+         & = c_{1}n^{3} - (2c_{2} - 1)n(n - \text{log }n) \notag
+  \end{align}
+  for $n > 1$, $n > \text{log }n$, then if $c_{2} \geq \frac{1}{2},~c_{1}\geq \frac{1}{2} + d$, 
+  we have
+  \begin{align}
+    T(n) & \leq c_{1}n^{3} - (2c_{2} - 1)n(n - \text{log }n) \notag \\
+         & \leq c_{1}n^{3} \notag \\
+         & = O(n^{3}) \notag
+  \end{align}
+  Thus we can conclude that for all $n \geq 1$, $T(n) = O(n^{3})$.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 4.5.9]
+  Is the big $O$ upper bound in Problem 8 actually a big $\Theta$ bound?
+\end{problem}
+
+\begin{solution}
+  Prove that $T(n) \geq cn^{3}$ for all $n \geq 1$.\\
+  For $n = 1$, $cn^{3} = c$, if $c \leq d$, then $T(1) \geq c\cdot 1^{3}$;\\
+  Suppose for any $1 \leq k < n$, $T(k) \geq ck^{3}$, then for $n$, we have
+  \begin{align}
+    T(n) & = 8T(n/2) + n \text{ log } n \notag \\
+         & \geq 8c(\frac{n}{2})^{3} + n \text{ log } n \notag \\
+         & = cn^{3} + n \text{log }n \notag
+  \end{align}
+  for $n > 1$, $n^{2} > \text{log }n$, then for $0 < c \leq d$, we have
+  \begin{align}
+    T(n) & \geq cn^{3} + n \text{log }n \notag \\
+         & \geq cn^{3} \notag \\
+         & = \Omega (n^{3}) \notag
+  \end{align}
+  Thus we can conclude that for all $n \geq 1$, $T(n) = \Omega (n^{3})$.\\
+  plus the conclusion in Problem 8, we can find that $T(n) = \Theta (n^{3})$ 
+  for all $n \geq 1$.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 4.5.10]
+  Give the best big $O$ upper bound you can for the solution to the recurrence
+  \[ T(n) = 2T(\frac{n}{3} - 3) + n. \]
+  Then prove by induction that your upper bound is correct.
+\end{problem}
+
+\begin{solution}
+  The upper bound should be $O(n)$.\\
+  Prove that for all $n \geq 1$, $T(n) \leq cn$.\\
+  Assume that $\text{max} \{ T(1),T(2),\cdots,T(11) \} = d$,\\
+  For $n = 1,2,\cdots,11$, if $c \geq d$, then $T(n) \leq cn$;\\
+  Suppose for $11 \leq k < n$, $T(k) \leq ck$, then for $n$, we have
+  \begin{align}
+    T(n) & = 2T(\frac{n}{3} - 3) + n \notag \\
+         & \leq 2c[\frac{n}{3} - 3] + n \notag \\
+         & = \frac{5}{3}cn - 6c \notag
+  \end{align}
+  for $c \geq 1$, we have
+  \begin{align}
+    T(n) & \leq \frac{5}{3}cn - 6c \notag \\
+         & \leq \frac{5}{3}cn \notag \\
+         & = O(n) \notag
+  \end{align}
+  Thus for all $n \geq 1$, $T(n) = O(n)$.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\end{document}
