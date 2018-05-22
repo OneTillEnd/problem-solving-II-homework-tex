@@ -1,0 +1,216 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第七讲：离散概率基础}
+\me{廖玺然}{171860647}
+\date{2018 年 4 月 19 日}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginrequired	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.1.10]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  How many five-card hands chosen from a standard deck of playing cards consist 
+  of five cards in a row (such as the nine of diamonds, ten of clubs, jack of 
+  clubs, queen of hearts, and king of spades)? Such a hand is called a straight. 
+  What is the probability that a five-card hand is a straight? Explore whether 
+  you get the same answer by using five-element sets as your model of hands or 
+  five-element permutations as your model of hands.
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+%\begin{remark}	% Optional
+%  以下解答参考了书籍/网站/讲义 $\ldots$。
+
+%  \noindent 以下解答是与 XXX 同学讨论得到的。
+%\end{remark}
+
+\begin{solution}
+  There are $10 \times 4^{5} = 10240$ straights.\\
+  By opinion of sets:\\
+  $P_{1} = \frac{10 \times 4^{5}}{\binom{52}{5}} = \frac{128}{32487}.$\\
+  By opinion of permutations:\\
+  $P_{2} = \frac{10 \times 4^{5} \times A_{5}^{5}}{\binom{52}{5} \times A_{5}^{5}} 
+  = \frac{128}{32487}.$\\
+  they are the same.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.1.12]
+  A die is made of a cube with a square painted on one side, a circle painted 
+  on two sides, and a triangle on three sides. If the die is rolled twice, what 
+  is the probability that the two shapes you see on top are the same?
+\end{problem}
+
+\begin{solution}
+  $P = \frac{1^{2} + 2^{2} + 3^{2}}{6^{2}} = \frac{7}{18}.$
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[CS: 5.2.4]
+  A bowl contains two red, two white, and two blue balls. If you remove two 
+  balls, what is the probability that at least one is red or white? Compute 
+  the probability that at least one is red.
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  $P_{1} = \frac{\binom{4}{1}\cdot\binom{2}{1} + \binom{4}{2}}{\binom{6}{2}} 
+  = \frac{14}{15};$\\
+  $P_{2} = \frac{\binom{2}{1}\cdot\binom{4}{1} + \binom{2}{2}}{\binom{6}{2}} 
+  = \frac{3}{5}.$
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.2.10]
+  If you are hashing $n$ keys into a hash table with $k$ locations, what is 
+  the probability that every location gets at least one key?
+\end{problem}
+
+\begin{solution}
+  If $n < k$, it's impossible;\\
+  If $n \geq k$, the number of hashings equals the number of functions from 
+  an $n$-element set onto a $k$-element set, according to Theorem 5.4, that is
+  \[ \sum_{i=0}^{k} (-1)^{i} \binom{k}{i} (k - i)^{n}. \]
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.3.2]
+  In three flips of a coin, is the event that two flips in a row are heads 
+  independent of the event that there is an even number of heads?
+\end{problem}
+
+\begin{solution}
+  Denote `two flips in a row are heads" as event $E$, `there is an even number 
+  of heads' as event $F$, then\\
+  $P(E \cap F) = (\frac{1}{2})^{2} \times \frac{1}{2} + \frac{1}{2} \times (\frac{1}{2})^{2} 
+  = \frac{1}{4};$\\
+  $P(E) = (\frac{1}{2})^{2} + (\frac{1}{2})^{2} - (\frac{1}{2})^{3} = \frac{3}{8};$\\
+  $P(F) = \binom{3}{1} \cdot (\frac{1}{2})^{3} + (\frac{1}{2})^{3} = \frac{1}{4};$\\
+  $P(E \cap F) \neq P(E)P(F)$, so the two events are not independent of each 
+  other.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.3.6]
+  Assume that on a true-false test, students will answer correctly any question 
+  on a subject that they know. Assume students guess at answers they do not know. 
+  For students who know $60\%$ of the material in a course, what is the 
+  probability that they will answer a question correctly? What is the probability 
+  that they will know the answer to a question they answer correctly?
+\end{problem}
+
+\begin{solution}
+  Denote `they answer a question correctly' as event $F$, `they know the answer' 
+  as event $E$, then\\
+  $P(F) = 60\% + 50\% \times 40\% = 80\%;$\\
+  $P(E \cap F) = 60\%;$\\
+  $P(E | F) = \frac{P(E \cap F)}{P(F)} = \frac{3}{4}.$
+\end{solution}
+%%%%%%%%%%%%
+
+%%%%%%%%%%%%
+\begin{problem}[CS: 5.3.12]
+  In a family consisting of a mother, father and two children of different ages, 
+  what is the probability that the family has two girls, given that one of the 
+  children is a girl? What is the probability that the children are both boys, 
+  given that the older child is a boy?
+\end{problem}
+
+\begin{solution}
+  A child's gender has nothing to do with others, so whether a child is a boy 
+  or a girl is independent of the other, then\\
+  $P_{1} = \frac{1}{2};$\\
+  $P_{2} = \frac{1}{2}.$
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[CS: 5.4.4]
+  Assuming that the process of answering the questions on a five-question quiz 
+  is an independent trials process and that a student has a probability $.8$ 
+  of answering any given question correctly, what is the probability of one 
+  particular sequence of four correct answers and one incorrect answer? What 
+  is the probability that a student answers exactly four questions correctly?
+\end{problem}
+
+\begin{solution}
+  $P_{1} = .8^{4} \times (1 - .8) = \frac{256}{3125};$\\
+  $P_{2} = \binom{5}{4} \times .8^{4} \times (1 - .8) = \frac{256}{625}.$
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 5.4.10]
+  What is the expected value of the constant random variable $X$ that has 
+  $X(s) = c$ for every number $s$ of the sample space?
+\end{problem}
+
+\begin{solution}
+  \[E(X) = \sum_{s} c\cdot P(s) = c\cdot \sum_{s} P(s) = c \cdot 1 = c.\]
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.4.12]
+  Solve Problem 11 for the case of a student taking a multiple-choice test 
+  with five choices for each answer and randomly guessing when she doesn't 
+  know the answer.
+\end{problem}
+
+\begin{solution}
+  Suppose the percentage of known material is $k$, then the percentage of correct 
+  answers is $k + \frac{1-k}{5} = \frac{1+4k}{5}$, the percentage of incorrect 
+  answers is $1 - \frac{1+4k}{5} = \frac{4-4k}{5}$.\\
+  Let $X(y) = \frac{1+4k}{5} - y\cdot \frac{4-4k}{5}$, according to the requirement, 
+  we hope that $E(X) = k$, namely
+  \[\sum_{y} P(y) \cdot (\frac{1+4k}{5} - y\cdot \frac{4-4k}{5}) = k,\]
+  We can easily find a constant $y = \frac{1}{4}$ that satisfies the equation.\\
+  So we should let $y = \frac{1}{4}$.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 5.4.15]
+  Prove Theorem 5.11.
+\end{problem}
+
+\begin{solution}
+  \begin{align}
+    E(cX) & = \sum_{s:s\in S} c\cdot X(s) P(s) \notag \\
+          & = c\cdot \sum_{s:s\in S} X(s)P(s) \notag \\
+          & = cE(X) \notag
+  \end{align}
+\end{solution}
+%%%%%%%%%%%%%%%%%%%
+\end{document}

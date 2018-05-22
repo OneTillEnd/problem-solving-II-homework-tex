@@ -1,0 +1,331 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第九讲：排序与选择}
+\me{廖玺然}{171860647}
+\date{2018 年 5 月 6 日}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginrequired	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[TC: 7.1-3]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  Give a brief argument that the running time of \textbf{PARTITION} on 
+  a subarray of size $n$ is $\Theta(n)$.
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+
+\begin{solution}
+  Consider the comparison in the loop as the dominant instruction, 
+  then we can figure out that the procedure does $n-1$ times of comparison 
+  given a subarray of size $n$, so the running time should be $\Theta(n)$.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: 7.2-4]
+  Banks often record transactions on an account in order of the times 
+  of the transactions, but many people like to receive their bank statements 
+  with checks listed in order by check number. People usually write 
+  checks in order by check number, and merchants usually cash them with 
+  reasonable dispatch. The problem of converting time-of-transaction 
+  ordering to check-number ordering is therefore the problem of sorting 
+  almost-sorted input. Argue that the procedure \textbf{INSERTION-SORT} 
+  would tend to beat the procedure \textbf{QUICKSORT} on this problem.
+\end{problem}
+
+\begin{solution}
+  Perspective 1: As for people giving out checks, the time ordering is the same as the 
+  check-number ordering.\\
+  Perspective 2: As for merchants cashing the checks, the check-number ordering is almost 
+  the same as the time ordering, and the difference between the two is 
+  because those merchants have different speeds in cashing checks. 
+  However, the difference in speeds is not so big. So 
+  \textbf{every element in the original array is not far from the place where it should be}.\\
+  As for the original list and the sorted list, their differences come 
+  from Perspective 2.\\
+  For such an array of size $n$, the running time of \textbf{INSERTION-SORT} 
+  is nearly $\Theta(n)$, the running time of \textbf{QUICKSORT} is nearly 
+  $\Theta(n^{2})$, so the former would tend to beat the latter.
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[TC: 7.3-2]
+  When \textbf{RANDOMIZED-QUICKSORT} runs, how many calls are made to 
+  the random-number generator \textbf{RANDOM} in the worst case? How 
+  about the best case? Give your answer in terms of $\Theta$-notation.
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  Denote the total number of calls for a subarray of size $n$ is $f(n)$.\\
+  For the worst case, every time the generator choose the largest element 
+  or the smallest element in the subarray, namely every time given a 
+  subarray of size $n$, the procedure partitions it into $A[r]$ and a 
+  subarray of size $n-1$, so\\
+  $f(n) = f(n-1) + \Theta(1) = \Theta(n);$\\
+  For the best case, every time the generator choose the middle-in-scale 
+  element in the subarray, namely every time given a subarray of size $n$, 
+  it is partitioned into $A[r]$, a subarray of size $[n/2]$, and another 
+  of size $[n/2]-1$, so\\ 
+  $f(n) = 2f(n/2) + \Theta(1) = \Theta(n).$
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: 7.4-2]
+  Show that quicksort's best-case running time is $\Omega(n\lg n)$.
+\end{problem}
+
+\begin{solution}
+  For the best case, $T(n) = 2T(n) + \Theta(n)$. Using the Master Theorem, 
+  we can figure out that $T(n) = \Theta(n\lg n)$, so $T(n) = \Omega(n\lg n)$.
+\end{solution}
+%%%%%%%%%%%%
+
+%%%%%%%%%%%%
+\begin{problem}[TC: 7-5]
+  One way to improve the \textbf{RANDOMIZED-QUICKSORT} procedure is to 
+  partition around a pivot that is chosen more carefully than by picking 
+  a random element from the subarray. One common approach is the \textbf{\textsl{median-of-3}} 
+  method: choose the pivot as the median (middle element) of a set of 
+  3 elements randomly selected from the subarray. For this problem, let 
+  us assume that the elements in the input array $A[1..n]$ are distinct 
+  and that $n\geq 3$. We denote the sorted output array by $A'[1..n]$. 
+  Using the median-of-3 method to choose the pivot element $x$, define 
+  $p_{i} = \text{Pr}\{x = A'[i]\}$.
+  \begin{itemize}
+    \item[\textbf{\textsl{a. }}] Give an exact formula for $p_{i}$ as a 
+      function of $n$ and $i$ for $i = 2,3,\ldots,n-1$.
+    \item[\textbf{\textsl{b. }}] By what amount have we increased the 
+      likelihood of choosing the pivot as $x = A'[\lfloor(n-1)/2\rfloor]$, 
+      the median of $A[1..n]$, compared with the ordinary implementation? 
+      Assume that $n\rightarrow\infty$, and give the limiting ratio of 
+      these probabilities.
+    \item[\textsl{\textbf{c. }}] If we define a ``good'' split to mean 
+      choosing the pivot as $x = A'[i]$, where $n/3\leq i\leq 2n/3$, by 
+      what amount have we increased the likelihood of getting a good split 
+      compared with the ordinary implementation?
+    \item[\textsl{\textbf{d. }}] Argue that in the $\Omega(n\lg n)$ running 
+      time of quicksort, the median-of-3 method affects only the constant 
+      factor.
+  \end{itemize}
+\end{problem}
+
+\begin{remark}
+  以下解答参考了网站：https://ita.skanev.com/07/problems/05.html
+\end{remark}
+
+\begin{solution}
+  \begin{itemize}
+    \item [a.] $p_{i} = \frac{\binom{i-1}{1}\cdot\binom{n-i}{1}}{\binom{n}{3}} 
+      = \frac{(i-1)(n-i)}{\binom{n}{3}}$
+    \item [b.] $\lim\limits_{n\rightarrow\infty} p_{i}/\frac{1}{n} 
+      = \lim\limits_{n\rightarrow\infty} \frac{6(n/2-1)(n-n/2)}{(n-1)(n-2)} 
+      = \lim\limits_{n\rightarrow\infty} \frac{6(n^{2} - 2n)}{4(n^{2} - 3n + 2)} 
+      = \frac{3}{2},$ so we get $50\%$ improvement.
+    \item [c.] After the modification the probability of a good split is
+      \begin{align}
+        \lim_{n\rightarrow\infty} \sum_{i=n/2}^{i=2n/3} \frac{6(i-1)(n-i)}{n(n-1)(n-2)}
+            & = \lim_{n\rightarrow\infty} \frac{6}{n(n-1)(n-2)} \sum_{i=n/3}^{i=2n/3} (i-1)(n-i) \notag \\
+            & = \lim_{n\rightarrow\infty} \binom{n}{3} \int_{n/3}^{2n/3} (i-1)(n-i)\text{d}i \notag \\
+            & = \lim_{n\rightarrow\infty} \binom{n}{3} \frac{1}{6}\cdot\frac{13}{27}[n^{3} + o(n^{3})] \notag \\
+            & = \lim_{n\rightarrow\infty} \frac{13}{27} \frac{n^{3} + o(n^{3})}{n^{3} + o(n^{3})} \notag \\
+            & = \frac{13}{27} \notag
+      \end{align}
+      So we get $\frac{13}{27}\div\frac{1}{3} - 1 = 44\%$ improvement.
+    \item [d.] The median-of-3 method does not guarantee to make a good split, so 
+      so the $\Omega(n\lg n)$ running time remains.
+  \end{itemize}
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 8.1-4]
+  Suppose that you are given a sequence of $n$ elements to sort. The input 
+  sequence consists of $n/k$ subsequence, each containing $k$ elements. 
+  The elements in a given subsequence are all smaller than the elements 
+  in the succeeding subsequence and larger than the elements in the 
+  preceding subsequence. Thus, all that is needed to sort the whole sequence 
+  of length $n$ is to sort the $k$ elements in each of the $n/k$ subsequences. 
+  Show an $\Omega(n\lg k)$ lower bound on the number of comparisons 
+  needed to solve this variant of the sorting problem.
+\end{problem}
+
+\begin{solution}
+  As each subsequence has $k!$ permutations, there will be totally $(k!)^{n/k}$ 
+  permutations. Similar to the proof for Theorem 8.1, we have
+  \begin{align}
+    2^{h} & \geq (k!)^{n/k} \notag \\
+    h     & \geq \lg(k!)^{n/k} \notag \\
+          & = (n/k)\lg(k!) \notag \\
+          & \geq (n/k)(k/2)\lg(k/2) \notag \\
+          & = \frac{1}{2}n\lg k - \frac{1}{2} n \notag \\
+          & = \Omega(n\lg k) \notag
+  \end{align}
+\end{solution}
+%%%%%%%%%%%
+
+%%%%%%%%%%%
+\begin{problem}[TC: 8.2-4]
+  Describe an algorithm that, given $n$ integers in the range 0 to $k$, 
+  preprocesses its input and then answer any query about how many of  
+  the $n$ integers fall into a range $[a..b]$ in $O(1)$ time. Your algorithm 
+  should use $\Theta(n + k)$ preprocessing time.
+\end{problem}
+
+\begin{solution}
+  Using counting-sort, take $c[i]$ to record the times integers that 
+  are not greater than $i$ appears in the original sequence, then we 
+  can use $c[b] - c[a-1]$ to denote integers falling into $[a..b]$, 
+  specially, $a[-1] = 0$.
+\end{solution}
+%%%%%%%%%%%
+
+%%%%%%%%%%%
+\begin{problem}[TC: 8.3-4]
+  Show how to sort $n$ integers in the range 0 to $n^{3} - 1$ in $O(n)$ 
+  time.
+\end{problem}
+
+\begin{solution}
+  Using radix-sort, we take $n$ 3-digit numbers in base $n$, then the 
+  running time would be $\Theta(3(n+n)) = \Theta(6n) = O(n)$.
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[TC: 8.4-2]
+  Explain why the worst-case running time for bucket sort is $\Theta(n^{2})$. 
+  What simple change to the algorithm preserves its linear average-case 
+  running time and makes its worst-case running time $O(n\lg n)$?
+\end{problem}
+
+\begin{solution}
+  If all the numbers fall into the same bucket and they are in reverse 
+  order, then the running time would be the worst-case running time for 
+  insertion-sort, which is $O(n^{2})$.\\
+  To improve the worst-case efficiency, we may use merge-sort instead 
+  of insertion-sort, 'cuz in the worst case, the bucket procedure does 
+  not contribute the dominant cost to the running time, so we only have 
+  to consider the running time of the sort procedure.
+\end{solution}
+%%%%%%%%%%%%
+
+%%%%%%%%%%%%
+\begin{problem}[TC: 8-2]
+  Suppose that we have an array of $n$ data records to sort and that the 
+  key to of each record has the value 0 or 1. An algorithm for sorting 
+  such a set of records might possess some subset of the following three 
+  desirable characteristics:
+  \begin{itemize}
+    \item [1.] The algorithm runs in $O(n)$ time.
+    \item [2.] The algorithm is stable.
+    \item [3.] The algorithm sorts in place, using no more than a constant 
+      amount of storage space in addition to the original array.
+    \item [\textsl{\textbf{a.}}] Give an algorithm that satisfies criteria 
+      1 and 2 above.
+    \item [\textsl{\textbf{b.}}] Give an algorithm that satisfies criteria 
+      1 and 3 above.
+    \item [\textsl{\textbf{c.}}] Give an algorithm that satisfies criteria 
+      2 and 3 above.
+    \item [\textsl{\textbf{d.}}] Can you use any of your sorting algorithms 
+      from parts (a)-(c) as the sorting method used in line 2 of \textbf{RADIX-SORT}, 
+      so that \textbf{RADIX-SORT} sorts $n$ records with $b$-bit keys in 
+      $O(bn)$ time? Explain how or why not.
+    \item [\textsl{\textbf{e.}}] Suppose that the $n$ records have keys 
+      in the range from 1 to $k$. Show how to modify counting sort so 
+      that it sorts the records in place in $O(n+k)$ time. You may use 
+      $O(k)$ storage outside the input array. Is your algorithm stable?
+  \end{itemize}
+\end{problem}
+
+\begin{remark}
+  以下解答参考了网站:https://ita.skanev.com/index.html
+\end{remark}
+
+\begin{solution}
+  \begin{itemize}
+    \item [a.] Using counting-sort, we need $\Theta(n)$ space for temporary 
+      storage and two variables to respectively count numbers of ones and 
+      zeros.
+    \item [b.] Using hoare-partition in quicksort which does not separate 
+      the pivot element from two subarrays, so that the algorithm will use 
+      no more than a constant amount of storage space.
+    \item [c.] Bubble-sort is OK.
+    \item [d.] Since radix-sort requires stable sort, so (b) is not suitable. 
+      (c) takes $\Theta(n^{2})$ time, so it is not suitable either. Only 
+      (a) would fit.
+    \item [e.]
+      $\text{while } i\leq A.length$\\
+      $~~~~A[i] \text{ is in the right place}$\\
+      $~~~~~~~~i = i + 1$\\
+      $~~~~\text{else}$\\
+      $~~~~~~~~\text{exchange } A[i] \text{ with the element in the place where }
+      A[i]\text{ should be}$
+  \end{itemize}
+\end{solution}
+%%%%%%%
+
+%%%%%%%
+\begin{problem}[TC: 9.1-1]
+  Show that the second smallest of $n$ elements can be found with $n + \lceil \lg n\rceil - 2$ 
+  comparisons in the worst case.
+\end{problem}
+
+\begin{solution}
+  Algorithm:\\
+  We divide the elements into pairs and do comparisons within each group. Repeat 
+  this process, we can find the smallest element with $n - 1$ comparisons.\\
+  We can easily figure out that the second smallest element is among the $\lceil\lg n\rceil$ 
+  elements that have been compared with the smallest element, so we simply do 
+  $\lceil\lg n\rceil - 1$ comparisons among them to find the second smallest element.\\
+  So in total, we need $n + \lceil\lg n\rceil - 2$ comparisons in the worst case.
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[TC: 9.3-7]
+  Describe an $O(n)$-time algorithm that, given a set $S$ of $n$ distinct 
+  numbers and a positive integer $k\leq n$, determines the $k$ numbers 
+  in $S$ that are closest to the median of $S$.
+\end{problem}
+
+\begin{solution}
+  Algorithm:\\
+  1. Find the median of the set in $O(n)$ time;\\
+  2. Figure out the distance of every element to the median in $O(n)$ time;\\
+  3. Find the $k$-th closest element to the median in $O(n)$ time;\\
+  4. Select elements closer than or as close as the element in (3) to the median 
+  in $O(n)$ time.\\
+  Then the total running time would be $4O(n) = O(n)$.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}

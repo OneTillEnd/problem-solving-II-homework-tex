@@ -1,0 +1,232 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第八讲：概率分析与随机算法}
+\me{廖玺然}{171860647}
+\date{\today}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginrequired	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.6.4]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  In a card game, you remove the jacks, queens, kings and aces from an ordinary 
+  deck of cards and shuffle them. You draw a card. If it is an ace, you are paid 
+  $\$1.00$, and the game is repeated. If it is a jack, you are paid $\$2.00$, and 
+  the game ends. If it is a queen, you are paid $\$3.00$, and the game ends. If 
+  it is a king, you are paid $\$4.00$, and the game ends. What is the maximum 
+  amount of money a rational person would pay to play the game?
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+
+\begin{solution}
+  Denote $X$ as the amount of money you get after a round of game.\\
+  $P(X = 2) = \frac{1}{4};~~P(X = 3) = \frac{1}{4}\times\frac{1}{4} + \frac{1}{4} = \frac{5}{16};$\\
+  $P(X = 4) = \frac{1}{4} + \frac{1}{4}\times\frac{1}{4} + \frac{1}{4}\times\frac{1}{4}\times\frac{1}{4} = \frac{21}{64};$\\
+  $P(X = k) = (\frac{1}{4})^{k-4}\times\frac{1}{4} + (\frac{1}{4})^{k-3}\times\frac{1}{4} + (\frac{1}{4})^{k-2}\times\frac{1}{4}$\\
+  $~~~~~~~~~~~~~~= (\frac{1}{4})^{k-1} + (\frac{1}{4})^{k-2} + (\frac{1}{4})^{k-3}.~~(k \geq 4)$
+  \begin{align}
+    E(X) & = \sum_{k=2}^{+\infty} P(X = k)\cdot k \notag \\
+         & = \frac{1}{2} + \frac{15}{16} + \sum_{k=4}^{+\infty} k\cdot[(\frac{1}{4})^{k-1} + (\frac{1}{4})^{k-2} + (\frac{1}{4})^{k-3}] \notag \\
+         & = \frac{23}{16} + \lim_{n\rightarrow+\infty} (\frac{91}{48} - \frac{7}{48}\times(\frac{1}{4})^{n-1} - 28n(\frac{1}{4})^{n}) \notag \\
+         & = \frac{10}{3} \notag
+  \end{align}
+  So a rational person would pay at most $\$3.33$ for the game.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.6.8]
+  Prove Theorem 5.23.
+\end{problem}
+
+\begin{solution}
+  \begin{align}
+      \sum_{i=1}^{n} E(X|F_{i})P(F_{i}) & = \sum_{i=1}^{n} [\sum_{j=1}^{k} x_{j}P((X=x_{j})|F_{i})]P(F_{i}) \notag \\
+             & = \sum_{i=1}^{n}\sum_{j=1}^{k} x_{j}P((X=x_{j})|F_{i})P(F_{i}) \notag \\
+             & = \sum_{i=1}^{n}\sum_{j=1}^{k} x_{j}P((X=x_{j})\cap F_{i}) \notag \\
+             & = \sum_{j=1}^{k} x_{j}[\sum_{i=1}^{n} P((X=x_{j})\cap F_{i})] \notag \\
+             & = \sum_{j=1}^{k} x_{j}P((X=x_{j})\cap S) \notag \\
+             & = \sum_{j=1}^{k} x_{j}P(X=x_{j}) \notag \\
+             & = E(X) \notag
+  \end{align}
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[CS: 5.7.2]
+  In Problem 1, let $X_{i}$ be the number of correct answers the student gets on 
+  Question $i$, that is, $X_{i}$ is either 0 or 1. What is the expected value of 
+  $X_{i}$? What is the variance of $X_{i}$? How does the sum of the variances of 
+  $X_{1}$ through $X_{5}$ relate to the variance of $X$ for Problem 1?
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  $\forall i \in \{ 1,2,3,4,5 \},~E(X_{i}) = 0.6\times 1 + 0.4\times 0 = 0.6;$\\
+  $\forall i \in \{ 1,2,3,4,5 \},~V(X_{i}) = 0.6\times(1-0.6)^{2} + 0.4\times(0-0.6)^{2} = 0.24;$\\
+  $\sum V(X_{i}) = 5\times 0.24 = 1.2 = V(X).$
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 5.7.4]
+  If the quiz in Problem 1 has 100 questions, what is the expected number of right 
+  answers, the variance of the expected number of right answers, and the standard 
+  deviation of the number of right answers?
+\end{problem}
+
+\begin{solution}
+  $E(X) = 100 \times 0.6 = 60;$\\
+  $V(X) = 100 \times (0.6\times(1-0.6)^{2} + 0.4\times(0-0.6)^{2}) = 24;$\\
+  $S(X) = (V(X))^{\frac{1}{2}} = 2\sqrt{6}.$
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 5.7.6]
+  What is the variance of the number of right answers for someone who knows $80\%$ 
+  of the material on which a 25-question quiz is based? What if the quiz has 100 
+  questions? 400 questions? How can you ``correct'' these variances for the fact 
+  that the ``spread'' in the histogram for the ``number of the right answers'' 
+  random variable only doubled when the number of questions in a test was quadrupled?
+\end{problem}
+
+\begin{solution}
+  $V(X,25) = 25\times(0.8\times(1-0.8)^{2} + 0.2\times(0-0.8)^{2}) = 4;$\\
+  $V(X,100) = 100\times(0.8\times(1-0.8)^{2} + 0.2\times(0-0.8)^{2}) = 16;$\\
+  $V(X,400) = 400\times(0.8\times(1-0.8)^{2} + 0.2\times(0-0.8)^{2}) = 64.$\\
+  The ``spread'' in the histogram is more related to the standard deviation, 
+  namely the square root of the variance, then from the examples above, we can 
+  find the doubled relationship between ``spread'' and number of questions.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[CS: 5.7.12]
+  How many questions need to be on a short-answer test for you to be $95\%$ sure 
+  that someone who knows $80\%$ of the course material gets a grade between $75\%$ 
+  and $85\%$?
+\end{problem}
+
+\begin{solution}
+  $V(X) = n\times(0.8\times(1-0.8)^{2} + 0.2\times(0-0.8)^{2}) = 0.16n;$\\
+  $S(X) = 0.4\sqrt{n};$\\
+  Let $2S(X) = 0.05n$, we have $n = 256.$
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[TC: 5.2-4]
+  Use indicator random variables to solve the following problem, which is known 
+  as the \textsl{\textbf{hat-check problem}}. Each of $n$ customers gives a hat 
+  to a hat-check person at a restaurant. The hat-check person gives the hat back 
+  to the customers in a random order. What is the expected number of customers 
+  who get back their own hat?
+\end{problem}
+
+\begin{solution}
+  Let $X_{i} = I\{\text{the $i$-th customer gets his own hat}\}$, and $X = X_{1} + X_{2} + \cdots + X_{n}$, 
+  then
+  \begin{align}
+      E(X) & = E[\sum_{i=1}^{n} X_{i}] \notag \\
+           & = \sum_{i=1}^{n} E[X_{i}] \notag \\
+           & = \sum_{i=1}^{n} \frac{\binom{n-1}{i-1}}{\binom{n}{i-1}}\cdot\frac{1}{n-i+1} \notag \\
+           & = \sum_{i=1}^{n} \frac{1}{n} \notag \\
+           & = 1 \notag
+  \end{align}
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 5.2-5]
+  Let $A[1..n]$ be an array of $n$ distinct numbers. If $i < j$ and $A[i] > A[j]$, 
+  then the pair $(i,j)$ is called an \textbf{\textsl{inversion}} of $A$. Suppose 
+  that the elements of $A$ form a uniform random permutation of $\langle 1,2,...,n \rangle$. 
+  Use indicator random variables to compute the expected number of inversions.
+\end{problem}
+
+\begin{solution}
+  Let $X_{ij} = I\{\text{$(i,j)$ is an inversion}\}$,
+  \[X = \sum_{i=1}^{n-1}\sum_{j=j+1}^{n} X_{ij},\]
+  then
+  \begin{align}
+      E(X) & = E[\sum_{i=1}^{n-1}\sum_{j=j+1}^{n} X_{ij}] \notag \\
+           & = \sum_{i=1}^{n-1}\sum_{j=j+1}^{n} E[X_{ij}] \notag \\
+           & = \sum_{i=1}^{n-1}\sum_{j=j+1}^{n} \frac{1}{2} \notag \\
+           & = \frac{1}{2} \times \frac{n(n-1)}{2} \notag \\
+           & = \frac{n(n-1)}{4} \notag
+  \end{align}
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 5.3-2]
+  Professor Kelp decides to write a procedure that produces at random any permutation 
+  besides the identity permutation. Does the code do what Professor Kelp intends?
+\end{problem}
+
+\begin{solution}
+  No, this code can never generate permutations whose first element is the first 
+  element of $A$.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: 5.3-3]
+  Suppose that instead of swapping element $A[i]$ with a random element from the 
+  subarray $A[i..n]$, we swapped it with a random element from anywhere in the 
+  array. Does the code produce a uniform random permutation? Why or why not?
+\end{problem}
+
+\begin{solution}
+  No, this code would generate at most $n^{n}$ permutations (including the same 
+  ones), and $n^{n}$ is not divisible by $n!$, so this code cannot generate ``uniform'' 
+  random permutations.
+\end{solution}
+%%%%%%%%
+
+%%%%%%%
+\begin{problem}[TC: 5.3-4]
+  Professor Armstrong suggests a procedure for generating a uniform random permutation. 
+  Show that each element $A[i]$ has a $1/n$ probability of winding up in any particular 
+  position in $B$. Then show that Professor Armstrong is mistaken by showing that 
+  the result permutation is not uniform random.
+\end{problem}
+
+\begin{solution}
+  $\forall k \in \{ 1,2,...,n \},~P(offset = k) = 1/n$, which means $\forall A[i]$, 
+  it has the same probability $1/n$ to be the $((i + offset)\text{ mod }n)$-th 
+  element in $B$, that is, it has $1/n$ probability of winding up in any position 
+  in $B$.\\
+  This code just generate a series of circulated sequences, and there are at most 
+  $n$ permutations, so they are not ``uniform random'', Professor is mistaken.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}

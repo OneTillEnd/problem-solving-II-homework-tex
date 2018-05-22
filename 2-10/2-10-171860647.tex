@@ -1,0 +1,448 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第十讲：基本数据结构}
+\me{廖玺然}{171860647}
+\date{2018 年 5 月 13 日}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginrequired	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[MA: 2.6]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  Show that the invariance of the ADT stack is not violated by its operations; 
+  that is, the three invariances are satisfied before and after each operation.
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+%\begin{remark}	% Optional
+%  以下解答参考了书籍/网站/讲义 $\ldots$。
+
+%  \noindent 以下解答是与 XXX 同学讨论得到的。
+%\end{remark}
+
+\begin{solution}
+  Before PUSH:\\
+  \indent Invariance 1: since every time there is only one element pushed onto the stack, 
+  it's obvious that $\forall \text{ a, b, t (a, t)}\in \text{elems and (b, t)}\in 
+  \text{elems, a}=\text{b}$;\\
+  \indent Invariance 2: since the time-stamp is increasing all the time, the current time-stamp 
+  is always greater than those recorded in the stack, namely $\forall \text{ (a, t)}\in 
+  \text{elems c}>\text{ t}$;\\
+  \indent Invariance 3: before PUSH, the stack is certainly valid, so $|\text{elems}|\leq\text{max}$.\\
+  After PUSH (suppose we try to push an element p onto the stack at time $\text{t}_{0}$):\\
+  \indent Invariance 1: according to invariance 2 before PUSH, $\forall\text{ (a, t) t}\leq\text{t}_{0}$, 
+  plus invariance 1 before PUSH, we have $\forall \text{ a, b, t (a, t)}\in \text{elems 
+  and (b, t)}\in \text{elems, a}=\text{b}$;\\
+  \indent Invariance 2: after pushing p onto the stack, c increases over t$_{0}$, plus 
+  invariance 2 before PUSH, we have $\forall \text{ (a, t)}\in \text{elems c}>\text{ t}$;\\
+  \indent Invariance 3: if before PUSH, $|\text{elems}|<\text{max}$, after PUSH $|\text{elems}|\leq\text{max}$; 
+  if before PUSH, $|\text{elems}|=\text{max}$, after PUSH, $|\text{elems}|=\text{max}$; 
+  So we have $|\text{elems}|\leq\text{max}$.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: 10.1-4]
+  Rewrite ENQUEUE and DEQUEUE to detect underflow and overflow of a queue.
+\end{problem}
+
+\begin{solution}
+  ENQUEUE($Q,x$)\\
+  \indent if $Q.head == 1$ and $Q.tail == Q.length$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent if $Q.head == Q.tail + 1$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent $Q[Q.tail] = x$\\
+  \indent if $Q.tail == Q.length$\\
+  \indent\indent $Q.tail = 1$\\
+  \indent else $Q.tail = Q.tail + 1$\\
+  \indent return\\
+  DEQUEUE($Q$)\\
+  \indent if $Q.head == Q.tail$\\
+  \indent\indent \textbf{error} ``underflow''\\
+  \indent $x = Q[Q.head]$\\
+  \indent if $Q.head == Q.length$\\
+  \indent\indent $Q.head = 1$\\
+  \indent else $Q.head = Q.head + 1$\\
+  \indent return $x$
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[TC: 10.1-5]
+  Whereas a stack allows insertion and deletion of elements at only one end, and 
+  a queue allows insertion at one end and deletion at the other end, a \textsl{\textbf{deque}} 
+  (double-ended queue) allows insertion and deletion at both ends. Write four 
+  $O(1)$-time procedures to insert elements into and delete elements from both 
+  ends of a deque implemented by an array.
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  (The following array $DQ[1..n]$ can hold at most $n-1$ elements)
+  INSERT-AT-RIGHT($DQ,x$)\\
+  \indent if $DQ.lend == 1$ and $DQ.rend == DQ.length$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent if $DQ.lend == DQ.rend + 1$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent $DQ[DQ.rend] = x$\\
+  \indent if $DQ.rend == DQ.length$\\
+  \indent\indent $DQ.rend = 1$\\
+  \indent else $DQ.rend = DQ.rend + 1$\\
+  \indent return\\
+  INSERT-AT-LEFT($DQ,x$)\\
+  \indent if $DQ.lend == 1$ and $DQ.rend == DQ.length$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent if $DQ.lend == DQ.rend + 1$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent if $DQ.lend == 1$\\
+  \indent\indent $DQ.lend = DQ.length$\\
+  \indent else $DQ.lend = DQ.lend - 1$\\
+  \indent $DQ[DQ.lend] = x$\\
+  \indent return\\
+  DELETE-AT-RIGHT($DQ$)\\
+  \indent if $DQ.lend == DQ.rend$\\
+  \indent\indent \textbf{error} ``underflow''\\
+  \indent if $DQ.rend == 1$\\
+  \indent\indent $DQ.rend = DQ.length$\\
+  \indent else $DQ.rend = DQ.rend - 1$\\
+  \indent $x = DQ[DQ.rend]$\\
+  \indent return $x$\\
+  DELETE-AT-LEFT($DQ$)\\
+  \indent if $DQ.lend == DQ.rend$\\
+  \indent\indent \textbf{error} ``underflow''\\
+  \indent $x = DQ[DQ.lend]$\\
+  \indent if $DQ.lend == DQ.length$\\
+  \indent\indent $DQ.lend = 1$\\
+  \indent else $DQ.lend = DQ.lend + 1$\\
+  \indent return $x$
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: 10.1-6]
+  Show how to implement a queue using two stacks. Analyze the running time of 
+  the queue operations.
+\end{problem}
+
+\begin{solution}
+  (The two stacks $S1$, $S2$ have the same length $n$)\\
+  ENQUEUE($S1,X$)\\
+  \indent if $S1.top == S1.length$\\
+  \indent\indent \textbf{error} ``overflow''\\
+  \indent PUSH($S1,x$)\\
+  \indent return\\
+  DEQUEUE($S1,S2$)\\
+  \indent if STACK-EMPTY($S2$)\\
+  \indent\indent if STACK-EMPTY($S1$)\\
+  \indent\indent\indent \textbf{error} ``underflow''\\
+  \indent\indent do\\
+  \indent\indent\indent PUSH($S2,\text{TOP}(S1)$)\\
+  \indent\indent until STACK-EMPTY($S1$)\\
+  \indent POP($S2$)\\
+  The ENQUEUE operation costs $\Theta(1)$ time, the DEQUEUE operation sometimes 
+  costs $\Theta(k)$ time where $k$ is the number of elements in stack $S1$, at 
+  other time DEQUEUE would also cost $\Theta(1)$ time.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 10.2-1]
+  Can you implement the dynamic-set operation INSERT on a singly linked list in 
+  $O(1)$ time? How about DELETE?
+\end{problem}
+
+\begin{solution}
+  INSERT is OK. We just need to attach the element to the tail of list.\\
+  DELETE is impossible, 'cuz we have to search the list for the element.
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 10.2-2]
+  Implement a stack using a singly linked list $L$. The operations PUSH and POP 
+  should still take $O(1)$ time.
+\end{problem}
+
+\begin{solution}
+  PUSH($L,k$)\\
+  \indent node $x =$ \textbf{new} node\\
+  \indent $x.key = k$\\
+  \indent $x.next = L.head$\\
+  \indent $L.head = x$\\
+  \indent return\\
+  POP($L$)\\
+  \indent if $L.head =$ NIL\\
+  \indent\indent \textbf{error} ``underflow''\\
+  \indent $k = L.head.key$\\
+  \indent $L.head = L.head.next$\\
+  \indent return $k$
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[TC: 10.2-3]
+  Implement a queue by a singly linked list $L$. The operations ENQUEUE and 
+  DEQUEUE should still take $O(1)$ time.
+\end{problem}
+
+\begin{solution}
+  (We have a node $L.tail$ to track the last element of the list)\\
+  INIT-QUEUE($L$)\\
+  \indent node $L.head =$ NIL\\
+  \indent node $L.tail =$ NIL\\
+  ENQUEUE($L,k$)\\
+  \indent node $x =$ \textbf{new} node\\
+  \indent $x.key = k$\\
+  \indent if $L.head ==$ NIL\\
+  \indent\indent $L.head = L.tail = x$\\
+  \indent\indent return\\
+  \indent if $L.head == L.tail$\\
+  \indent\indent $L.head.next = x$\\
+  \indent\indent $L.tail = x$\\
+  \indent\indent return\\
+  \indent $L.tail.next = x$\\
+  \indent $L.tail = x$\\
+  \indent return\\
+  DEQUEUE($L$)\\
+  \indent if $L.head ==$ NIL\\
+  \indent\indent \textbf{error} ``underflow''\\
+  \indent $k = L.head.key$\\
+  \indent if $L.head == L.tail$\\
+  \indent\indent $L.head = L.tail =$ NIL\\
+  \indent\indent return $k$\\
+  \indent $L.head = L.head.next$\\
+  \indent return $k$
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 10.2-6]
+  The dynamic-set operation UNION takes two disjoint sets $S_{1}$ and $S_{2}$ 
+  as input, and it returns a set $S = S_{1} \cup S_{2}$ consisting of all the 
+  elements of $S_{1}$ and $S_{2}$. The sets $S_{1}$ and $S_{2}$ are usually 
+  destroyed by the operation. Show how to support UNION in $O(1)$ time using 
+  a suitable list data structure.
+\end{problem}
+
+\begin{solution}
+  Use two singly linked list. To UNION is just to attach one list's head to 
+  the other's tail.
+\end{solution}
+%%%%%%%
+
+%%%%%%%
+\begin{problem}[TC: 10.3-4]
+  It is often desirable to keep all elements of a doubly linked list compact in 
+  storage, using, for example, the first $m$ index locations in the multiple-array 
+  representation. Explain how to implement the procedures ALLOCATE-OBJECT and 
+  FREE-OBJECT so that the representation is compact. Assume that there are no 
+  pointers to elements of the linked list outside the list itself.
+\end{problem}
+
+\begin{solution}
+  Keep these rules:
+  \begin{itemize}
+    \item [1.] $next[i] = i + 1$
+    \item [2.] $prev[j] = j - 1$
+  \end{itemize}
+  To allocate an object, we need to add an element at the tail of array $key$ 
+  and add an element at the tail of arrays $prev$ and $next$ respectively 
+  according to the rules above;\\
+  To deallocate an object, we need to move elements after it in the array $key$ 
+  1 position forward and delete the last element of arrays $prev$ and $next$ 
+  respectively.
+\end{solution}
+%%%%%%%
+
+%%%%%%%
+\begin{problem}[TC: 10.3-5]
+  Let $L$ be a doubly linked list of length $n$ stored in arrays $key$, $prev$ and 
+  $next$ of length $m$. Suppose that these arrays are managed by ALLOCATE-OBJECT 
+  and FREE-OBJECT procedures that keep a doubly linked free list $F$. Suppose 
+  further that of the $m$ items, exactly $n$ are on list $L$ and $m-n$ are on the 
+  free list. Write a procedure COMPACTIFY-LIST($L,F$) that, given the list $L$ and 
+  the free list $F$, moves the items in $L$ so that they occupy array position 
+  $1,2,\ldots,n$ and adjusts the free list $F$ so that it remains correct, occupying 
+  array positions $n+1,n+2,\ldots,m$. The running time of your procedure should be 
+  $\Theta(n)$, and it should use only a constant amount of extra space. Argue that 
+  your procedure is correct.
+\end{problem}
+
+\begin{remark}
+  以下解答参考了网站：https://ita.skanev.com/10/03/05.html
+\end{remark}
+
+\begin{solution}
+  (in the following procedure, <variable> == NIL means it has no value\\
+  and <variable> = NIL means remove the value once assigned to <variable>)\\
+  ($free$ denotes the head index of $F$)\\
+  COMPACTIFY-LIST($L,F$)\\
+  \indent int $left, right, i$\\
+  \indent if $free ==$ NIL\\
+  \indent\indent return\\
+  \indent $i = free$\\
+  \indent while $i\neq$ NIL\\
+  \indent\indent $prev[i] = -1$\\
+  \indent\indent $i = next[i]$\\
+  \indent $left = 1$\\
+  \indent $right = m$\\
+  \indent while \textbf{true}\\
+  \indent\indent while $prev[left]\neq -1$\\
+  \indent\indent\indent $left = left + 1$\\
+  \indent\indent while $prev[right] == -1$\\
+  \indent\indent\indent $right = right - 1$\\
+  \indent\indent if $left \geq right$ \textbf{break}\\
+
+  \indent\indent $prev[left] = prev[right]$\\
+  \indent\indent $next[left] = next[right]$\\
+  \indent\indent $key[left] = key[right]$\\
+
+  \indent\indent $next[right] = left$\\
+  \indent\indent $right = right - 1$\\
+  \indent\indent $left = left + 1$\\
+
+  \indent $right = right + 1$\\
+  \indent for $i$ from 1 to $right - 1$\\
+  \indent\indent if $prev[i]\geq right$\\
+  \indent\indent\indent $prev[i] = next[prev[i]]$\\
+  \indent\indent if $next[i]\geq right$\\
+  \indent\indent\indent $next[i] = next[next[i]]$\\
+  \indent for $i$ from $right$ to $m - 1$\\
+  \indent\indent $next[i] = i + 1$\\
+  \indent $next[i] = $ NIL\\
+  \indent $free = right$\\
+  \indent return
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[TC: 10.4-2]
+  Write an $O(n)$-time recursive procedure that, given an $n$-node binary tree, 
+  prints out the key of each node in the tree.
+\end{problem}
+
+\begin{solution}
+  PRINT-KEY($tree$)\\
+  \indent print $tree.key$\\
+  \indent if $tree.left\neq$ NIL\\
+  \indent\indent PRINT-KEY($tree.left$)\\
+  \indent if $tree.right\neq$ NIL\\
+  \indent\indent PRINT-KEY($tree.right$)\\
+  \indent return
+\end{solution}
+%%%%%%%
+
+%%%%%%%
+\begin{problem}[TC: 10.4-3]
+  Write an $O(n)$-time nonrecursive procedure that, given an $n$-node binary tree, 
+  prints out the key of each node in the tree. Use a stack as an auxiliary data 
+  structure.
+\end{problem}
+
+\begin{solution}
+  node $stack[n]$\\
+  PRINT-KEY($tree$)\\
+  \indent $stack[0] = tree$\\
+  \indent int $count = 1$\\
+  \indent while $count > 0$\\
+  \indent\indent $count = count - 1$\\
+  \indent\indent $tree = stack[count]$\\
+  \indent\indent print $tree.key$\\
+  \indent\indent if $tree.left\neq$ NIL\\
+  \indent\indent\indent $stack[count] = tree.left$\\
+  \indent\indent\indent $count = count + 1$\\
+  \indent\indent if $tree.right\neq$ NIL\\
+  \indent\indent\indent $stack[count] = tree.right$\\
+  \indent\indent\indent $count = count + 1$\\
+  \indent return
+\end{solution}
+%%%%%%%%
+
+%%%%%%%%
+\begin{problem}[TC: 10.4-4]
+  Write an $O(n)$-time procedure that prints all the keys of an arbitrary rooted 
+  tree with $n$-nodes, where the tree is stored using the left-child, right-sibling 
+  representation.
+\end{problem}
+
+\begin{solution}
+  PRINT-KEY($tree$)\\
+  \indent print $tree.key$\\
+  \indent if $tree.child\neq$ NIL\\
+  \indent\indent PRINT-KEY($tree.child$)\\
+  \indent if $tree.sibling\neq$ NIL\\
+  \indent\indent PRINT-KEY($tree.sibling$)\\
+  \indent return
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%
+\begin{problem}[TC: 10-3]
+\end{problem}
+
+\begin{remark}
+  以下解答参考了网站：https://ita.skanev.com/10/problems/03.html
+\end{remark}
+
+\begin{solution}
+  \begin{itemize}
+    \item [a.] The \textbf{for} loop has already taken $t$ times, so the total 
+      number of iterations is at least $t$.
+    \item [b.] The running time of the \textbf{for} loop is $O(t)$, and the 
+      expected running time of the \textbf{while} loop is $O(\text{E}[X_{t}])$, 
+      so the expected running time of the procedure is $O(t + \text{E}[X_{t}])$.
+    \item [c.] \[ \text{Pr}\{ X_{t}\geq r \} = (\frac{n-r}{n})^{t} = (1 - \frac{r}{n})^{t} \]
+      By (C.25) we have
+      \[ E(X_{t}) = \sum_{r = 1}^{\infty}\text{Pr}\{ X_{t}\geq r\} = 
+      \sum_{r = 1}^{n}\text{Pr}\{X_{t}\geq r \} = \sum_{r = 1}^{n}(1 - \frac{r}{n})^{t} \]
+    \item [d.] By (A.11) we have
+      \[ \sum_{r = 0}^{n-1}r^{t}\leq \int_{0}^{n} x^{t}dx = \frac{n^{t + 1}}{t + 1} \]
+    \item [e.] Through (d) we have
+      \begin{align}
+        E(X_{t}) & = \sum_{r = 1}^{n}(1 - \frac{r}{n})^{t} \notag \\
+                 & = \sum_{r = 0}^{n-1}(\frac{r}{n})^{t} \notag \\
+                 & = \frac{1}{n^{t}}\sum_{r = 0}^{n - 1}r^{t} \notag \\
+                 & \leq \frac{1}{n^{t}}\cdot\frac{n^{t + 1}}{t + 1} \notag \\
+                 & = \frac{n}{t + 1} \notag
+      \end{align}
+    \item [f.] The expected running time is then $O(t + E(X_{t})) = O(t + \frac{n}{t + 1}) 
+      = O(t + \frac{n}{t})$.
+    \item [g.] Since COMPACT-LIST-SEARCH minimizes the $O(t + \frac{n}{t})$ running 
+      time, we need to find the minimum of $t + \frac{n}{t}$ in the interval $[1,n]$, 
+      which is $2\sqrt{n}$, so the expected running time is $O(\sqrt{n})$.
+    \item [h.] Because we cannot come to the conclusion in (c) if not all the keys 
+      are distinct.
+  \end{itemize}
+
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\end{document}
