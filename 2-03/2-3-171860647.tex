@@ -1,0 +1,201 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第三讲：组合与计数}
+\me{廖玺然}{171860647}{计算机科学与技术系}
+\date{2018 年 3 月18 日}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginthishw	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[CS: 1.1.13]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  Suppose on Day 1 you receive one penny, and, for $i > 1$, on Day $i$ you receive 
+  twice as many pennies as you did on Day $i - 1$. How many pennies will you have on 
+  Day 20? How many will you have on Day $n$? Can you justify your answer by using the 
+  sum or product principle?
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+%\begin{remark}	% Optional
+%  以下解答参考了书籍/网站/讲义 $\ldots$。
+
+%  \noindent 以下解答是与 XXX 同学讨论得到的。
+%\end{remark}
+
+\begin{solution}
+  On Day $20$, there will be $2^{20} - 1$ pennies.\\
+  On Day $n$, there will be $2^{n} - 1$ pennies.\\
+  Consider the pennies received on Day $i$ as set $P_{i}$, the total in Day $n$ 
+  as set $S_{n}$, according to the sum principle, $|S_{n}| = \sum_{i = 1}^{n} |P_{i}|$, 
+  since $|P_{i}| = 2^{i - 1}$, we have $|S_{n}| = 2^{n} - 1$, which completes the proof.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 1.2.5]
+  Assuming $k \leq n$, in how many ways can we pass out $k$ distinct pieces of fruit 
+  to $n$ children if each child may get at most one piece? What if $k > n$? Assume 
+  for both questions that we pass out all the fruit.
+\end{problem}
+
+\begin{solution}
+  1) $k \leq n$: the process is like picking out all the $k$-element subsets of an 
+  $n$-element set, then figuring out all the permutations of each subset 
+  respectively, thus we have $\binom{n}{k} \cdot k! = \frac{n!}{(n-k)!}$ ways.\\
+  2) $k \geq n$: the process is like figuring out all the $n$-element permutations of 
+  a $k$-element set, thus we have $k(k-1)\cdots(k-n+1) = \frac{k!}{(k-n)!}$ ways.
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[CS: 1.2.15]
+  A tennis club has $2n$ members. We want to pair up the members by twos for singles 
+  matches. In how many ways can we pair up all the members of the club? Suppose that 
+  in addition to specifying who plays whom, we also determine who serves first for 
+  each pairing. Now in how many ways can we specify our pairs?
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  1) First we pick out all the permutations of a $2n$-element set, namely $(2n)!$,\\
+  Considering that this process includes those permutations that have the same pair
+  (though in different order), we have $\frac{(2n)!}{2^{n}}$ permutations excluding 
+  the repeated ones,\\
+  Finally we pair up the adjacent two from head to tail, and exclude those sequence 
+  with same pairs in different order, then we can get $\frac{(2n)!}{n! \cdot 2^{n}}$ 
+  choices.\\
+  2) For one way of division, we have $2^{n}$ ways to specify, so in total we have 
+  $\frac{(2n)!}{n!}$ ways.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 1.5.4]
+  Use multisets to determine the number of ways to pass out $k$ identical apples to 
+  $n$ children. Assume that a child may get more than one apple.
+\end{problem}
+
+\begin{solution}
+  We may suppose that the apples have been numbered, then according to the bookcase 
+  example, we have $\frac{(n+k-1)!}{(n-1)!}$ ways of distribution, but in fact the 
+  apples are identical, so the result shoud be $\frac{(n+k-1)!}{k! \cdot (n-1)!}$.
+\end{solution}
+%%%%%%%%%%%%
+
+%%%%%%%%%%%
+\begin{problem}[CS: 1.5.12]
+  A standard notation for the number of partitions of an $n$-element set into $k$ 
+  classes is $S(n,k)$. Because the empty family of subsets of the empty set is a 
+  partition of the empty set, $S(0,0)$ is 1. In addition, $S(n,0)$ is 0 for $n > 0$, 
+  because there are no partitions of a nonempty set into no parts. $S(1,1)$ is 1.\\
+  a. Explain why $S(n,n)$ is 1 for all $n > 0$. Explain why $S(n,1)$ is 1 for all 
+  $n > 0$.\\
+  b. Explain why $S(n,k) = S(n-1,k-1) + kS(n-1,k)$ for $1 < k < n$.\\
+  c. Make a table like Table 1.1 that shows the values of $S(n,k)$ for values of $n$ 
+  and $k$ ranging from 1 to 6.
+\end{problem}
+
+\begin{solution}
+  a. $S(n,n)$ indicates the number of ways to pick out $n$-element subsets of an 
+  $n$-element set, and there's only one such subset, namely itself. \\
+  $~~~~S(n,1)$ indicates the number of ways to pick out $1$-element subsets of an 
+  $n$-element set, that is picking out 1 element at a time, so there's only 1 way.\\
+  b. $S(n,k)$ could be generated from two aspects: add 1 class beside $k-1$ classes 
+  partitioning an $n-1$-element set, which has only 1 way, or add 1 element to one 
+  of the $k$ classes partitioning an $n-1$-element set, which has $k$ ways. So we 
+  can conclude that $S(n,k) = S(n-1,k-1) + kS(n-1,k)$.\\
+  c. \fignocaption{width = 1.0\textwidth}{figs/table_1.png}
+\end{solution}
+%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[CS: 1.5.14]
+  Consider the following C++ function to compute $\binom{n}{k}$.\\
+  \indent int pascal(int n, int k)\\
+  \indent \{\\
+  \indent \indent if (n < k)\\
+  \indent \indent \{\\
+  \indent \indent \indent cout << "error: n < k" << endl;\\
+  \indent \indent \indent exit(1);\\
+  \indent \indent \}\\
+  \indent \indent if ((k==0)||(n==k)\\
+  \indent \indent \indent return 1;\\
+  \indent \indent return pascal(n-1,k-1) + pascal(n-1,k);\\
+  \indent \}\\
+  Enter this code, compile it, and run it (you will need to create a simple main 
+  program that calls it). Run it on larger and larger values of $n$ and $k$, and 
+  observe the running time of the program. It should be surprisingly slow. Why is 
+  it so slow? Can you write a different function to compute $\binom{n}{k}$ that is 
+  \textsl{significantly} faster? Why is your new version faster?
+\end{problem}
+
+\begin{solution}
+  As the times of recursion increase, the two addends may become incredibly large, 
+  so the process would be really slow.\\
+  modified version:\\
+  \indent int pascal(int n, int k)\\
+  \indent \{\\
+  \indent \indent int coefficient = 1;\\
+  \indent \indent for(int i = 1, i <= k, ++i)\\
+  \indent \indent \{\\
+  \indent \indent \indent coefficient *= ((n-k+i)/i);\\
+  \indent \indent \}\\
+  \indent \indent return coefficient;\\
+  \indent \}\\
+  This version is a lot faster cuz each factor is not that large.
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+%\begincorrection	% begin the ``correction'' part (Optional)
+
+%%%%%%%%%%
+%\begin{problem}[题号]
+%  题目。
+%\end{problem}
+
+%\begin{cause}
+%  简述错误原因（可选）。
+%\end{cause}
+
+% Or use the ``solution'' environment
+%\begin{revision}
+%  正确解答。
+%\end{revision}
+%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+%\beginfb	% begin the feedback section (Optional)
+
+%你可以写：
+%\begin{itemize}
+%  \item 对课程及教师的建议与意见
+%  \item 教材中不理解的内容
+%  \item 希望深入了解的内容
+%  \item 等
+%\end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}

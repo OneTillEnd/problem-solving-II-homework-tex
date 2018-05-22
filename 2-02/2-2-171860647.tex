@@ -1,0 +1,199 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第二讲：算法的效率}
+\me{廖玺然}{171860647}{计算机科学与技术系}
+\date{\today}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginthishw	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[DH: 6.1]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  Consider the following salary computation problem. The input consists of a number \textsl{N}, 
+  a list, \textsl{BT}(1),..., \textsl{BT}(\textsl{N}), of before-tax salaries, and two 
+  tax rates, \textsl{Rh} for salaries that are larger than \textsl{M}, and \textsl{Rl} 
+  for salaries that are no larger than \textsl{M}. Here \textsl{Rh} and \textsl{Rl} are 
+  positive fractions, i.e., 0 < \textsl{Rh}, \textsl{Rl} < 1. It is required to compute 
+  a list, \textsl{AT}(1),..., \textsl{AT}(\textsl{N}), of after-tax salaries, and two 
+  sums, \textsl{Th} and \textsl{Tl}, containing the total taxes paid according to the 
+  two rates, respectively. Here is a solution to the problem. It calculates the after-tax 
+  salaries first and then the tax totals:\\
+  $~~~~\text{for } I \text{ from 1 to } N \text{ do the following:}$\\
+  $~~~~~~~~\text{if } BT(I) > M \text{ then } AT(I) \gets BT(I) \times (1 - Rh);$\\
+  $~~~~~~~~\text{otherwise } AT(I) \gets BT(I) \times (1 - Rl);$\\
+  $~~~~Th \gets 0;$\\
+  $~~~~Tl \gets 0;$\\
+  $~~~~\text{for } I \text{ from 1 to } N \text{ do the following:}$\\
+  $~~~~~~~~\text{if } BT(I) > M \text{ then } Th \gets Th + BT(I) \times Rh;$\\
+  $~~~~~~~~\text{otherwise } Tl \gets Tl + BT(I) \times Rl.$\\
+  (a) Suggest a series of transformations that will make the program as efficient as 
+  possible, by minimizing both the number of arithmetical operations and the number of 
+  comparisons. Estimate the improvement to these complexity measures that is gained by 
+  each of your transformations.\\
+  (b) How would you further improve the program, if you are guaranteed that no before-tax 
+  salary is strictly less than \textsl{M}(i.e., there might be before-tax salaries of 
+  exactly \textsl{M}, but not less)? How would you characterize the rate of improvement 
+  in this case?
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+%\begin{remark}	% Optional
+%  以下解答参考了书籍/网站/讲义 $\ldots$。
+
+%  \noindent 以下解答是与 XXX 同学讨论得到的。
+%\end{remark}
+
+\begin{solution}
+  (a) Improved version:\\
+  $~~~~RH \gets 1 - Rh;~RL \gets 1 - Rl;$\\
+  $~~~~Th \gets 0;~Tl \gets 0;$\\
+  $~~~~\text{for } I \text{ from 1 to } N \text{ do the following:}$\\
+  $~~~~~~~~\text{if } BT(I) > M \text{ then}$\\
+  $~~~~~~~~~~~~AT(I) \gets BT(I) \times RH;$\\
+  $~~~~~~~~~~~~Th \gets Th + BT(I) \times Rh;$\\
+  $~~~~~~~~\text{otherwise}$\\
+  $~~~~~~~~~~~~AT(I) \gets BT(I) \times RL;$\\
+  $~~~~~~~~~~~~Tl \gets Tl + BT(I) \times Rl.$\\
+  不考虑其他改动的情况下，\\
+  1) 减少循环数目降低了$N$的时间消耗；\\
+  2) 先计算税后税前工资之比减少了$N - 1$次操作数。\\
+  (b) $RH \gets 1 - Rh;$\\
+  $~~~~~~Sl \gets M \times (1 - Rl);~TL \gets M \times Rl$\\
+  $~~~~~~Th \gets 0;~Tl \gets 0;$\\
+  $~~~~~~\text{for } I \text{ from 1 to } N \text{ do the following:}$\\
+  $~~~~~~~~~~\text{if } BT(I) > M \text{ then}$\\
+  $~~~~~~~~~~~~~~AT(I) \gets BT(I) \times RH;$\\
+  $~~~~~~~~~~~~~~Th \gets Th + BT(I) \times Rh;$\\
+  $~~~~~~~~~~\text{otherwise}$\\
+  $~~~~~~~~~~~~~~AT(I) \gets Sl;$\\
+  $~~~~~~~~~~~~~~Tl \gets Tl + TL.$\\
+  先计算了工资为$M$元的人税后所得和应缴税款，减少了$2(N - 1)$次操作数，时间消耗减少了
+  约33\%(仅考虑计算操作).
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[DH: 6.8]
+  Prove that the following algorithms are of linear-time complexity:\\
+  (a) The algorithm for counting sentences containing the word "money", presented in 
+  Chapter 2.\\
+  (b) The algorithm for maximal polygonal distance, presented in Chapter 4.
+\end{problem}
+
+\begin{solution}
+  (a) 这个搜索算法总会遍历文段中所有单词，其他操作数与“money”的出现次数相当，与单词总数
+  相比可以忽略，设单词总数为$N$，则时间复杂度为$O(N)$，即线性时间复杂度。\\
+  (b) 这个算法的循环次数与多边形的边数相等，除第一次循环只需执行1次比较外，其余循环内均需
+  进行2次比较，设多边形边数为$N$，操作数约为$3N$，因此时间复杂度为$O(N)$，即线性时间复杂度。
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[UD: 6.10]
+  Analyze the worst-case time complexity of the algorithms for traversing and processing 
+  information stored in trees that you were asked to design in Exercises 4.3 and 4.2.
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  算法未完成，下次作业订正麻烦老师了，致歉。
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%%%%%
+\begin{problem}[DH: 6.13]
+  Prove a lower bound of $O(N \times \text{log}_{2}N)$ on the time complexity of any 
+  comparison-based sorting algorithm.
+\end{problem}
+
+\begin{remark}
+  以下解答参考了GeeksforGeeks: Lower bound for comparison based sorting algorithm\\
+  https://www.geeksforgeeks.org/lower-bound-on-comparison-based-sorting-algorithms/
+\end{remark}
+
+\begin{solution}
+  我们可以把这种比较排序算法画成一棵树，叶节点是$N$个元素的所有排列，叶节点以上的节点表示
+  对两个元素顺序的判断（因此有两个分支），因此我们可得以下两个事实：\\
+  1) 叶节点至少有$N!$个；\\
+  2) 假设执行算法需要对最大比较操作数为$x$，则树的深度最大为$x$，而深度为$x$的树最多有
+  $2^{x}$个叶节点；\\
+  因此有$n! \leq 2^{x}$，\\
+  两边取以2为底的对数得$\text{log}_{2}(n!) \leq x$，\\
+  由于$\text{log}_{2}(n!) = \Theta(n\text{log}n)$，\\
+  所以$x = \Omega(n\text{log}_{2}n)$，\\
+  得证。
+\end{solution}
+%%%%%%%%%%%%%
+
+%%%%%%%%%%%%
+\begin{problem}[DH: 6.18]
+  Design an algorithm \textsl{LG}1, with input integers $m, n > 1$, that calculates 
+  $\text{lg}_{m}n$ by repeatedly calculating the powers $m^{0}, m^{1},\cdots,m^{k}$, 
+  until a number $k$ is found satisfying $m^{k} \leq n \leq m^{k+1}$. Analyze the time 
+  and space complexity of \textsl{LG}1.
+\end{problem}
+
+\begin{solution}
+  \textsl{LG}1:\\
+  $~~~~base \gets m;~k \gets 0;$\\
+  $~~~~\text{while } base < n \text{ do the following:}$\\
+  $~~~~~~~~base \gets base \times m;$\\
+  $~~~~~~~~k \gets k + 1;$\\
+  显然上述循环会进行$\text{log}_{m}n$次，因此时间复杂度为$O(\text{log}_{m}n)$;\\
+  算法执行过程中只定义了4个变量，因此空间复杂度为$O(1)$。
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+%\begincorrection	% begin the ``correction'' part (Optional)
+
+%%%%%%%%%%
+%\begin{problem}[题号]
+%  题目。
+%\end{problem}
+
+%\begin{cause}
+%  简述错误原因（可选）。
+%\end{cause}
+
+% Or use the ``solution'' environment
+%\begin{revision}
+%  正确解答。
+%\end{revision}
+%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+%\beginfb	% begin the feedback section (Optional)
+
+%你可以写：
+%\begin{itemize}
+%  \item 对课程及教师的建议与意见
+%  \item 教材中不理解的内容
+%  \item 希望深入了解的内容
+%  \item 等
+%\end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}

@@ -1,0 +1,230 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第一讲：算法正确性}
+\me{廖玺然}{171860647}{计算机科学与技术系}
+\date{\today}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginthishw	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[DH: 5.6]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  We have seen in the correctness demonstration for the \textbf{reverse} 
+  algorithm that only three (well-placed) invariants are sufficient for 
+  the proof.\\
+  (a) How would you generalize the above claim to any algorithm whose structure
+  (i.e., the structure of its flowchart) is similar to \textbf{reverse}?\\
+  (b) What kind of flowchart enables a partial correctness proof of the 
+  corresponding algorithm with only two invariants, attached to the \textbf{start} 
+  and \textbf{stop} points?\\
+  (c) How many well-attached invariants are sufficient for proving the partial 
+  correctness of an algorithm whose flowchart contains two loops?\\
+  (d) For any flowchart with two loops, how many invariants are necessary for 
+  proving partial correctness in the method given in the text? How would you 
+  classify the sufficient number of assertions according to the structure of 
+  a two-loop flowchart? (Hint: consider connectedness, nesting.)
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+%\begin{remark}	% Optional
+%  以下解答参考了书籍/网站/讲义 $\ldots$。
+
+%  \noindent 以下解答是与 XXX 同学讨论得到的。
+%\end{remark}
+
+\begin{solution}
+  (a) An algorithm with one loop needs at least 3 invariants to prove its 
+  correctness.\\
+  (b) Flowcharts with with only sequential structure.\\
+  (c) 4.\\
+  (d) 4. Two class: two loops in sequence or one loop nested in another; 
+  The nested loops may need more than 4;
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[DH: 5.9]
+  Construct a function \textbf{equal}($X, Y$) that tests whether the strings 
+  $X$ and $Y$ are equal. It should return true or false accordingly. You may 
+  use the operations mentioned in the text and those defined above. (Note, 
+  however, that there is no way of comparing arbitrarily long strings in a 
+  single operation.) Prove the total correctness of your algorithm.
+\end{problem}
+
+\begin{remark}
+  以下解答参考了课程QQ群内关于“多重条件判断循环是否终止时循环不变量的选择”的问答。
+\end{remark}
+
+\begin{solution}
+  \textbf{equal}($X, Y$):\\
+  $~~~~\text{while}~X \neq \Lambda~\text{and flag == true do the following:}$\\
+  $~~~~~~~~\text{flag = true;}$\\
+  $~~~~~~~~\text{if}~Y = \Lambda~\text{then flag = false;}$\\
+  $~~~~~~~~\text{else if \textbf{eq}(\textbf{head}(X), \textbf{head}(Y)) then}$\\
+  $~~~~~~~~~~~~X = \text{tail}(X);$\\
+  $~~~~~~~~~~~~Y = \text{tail}(Y);$\\
+  $~~~~~~~~\text{else flag = false;}$\\
+  $~~~~\text{if}~Y \neq \Lambda~\text{then flag = false;}$\\
+  $~~~~\text{return flag;}$\\
+  proof.\\
+  (1) the start assertion: $X = S1$ and $Y = S2$, $S1$, $S2$ are both strings;\\
+  (2) the invariant for the loop: $S1 = S2$ if and only if both $X = Y$ and 
+  flag is true;\\
+  (3) the end assertion: $S1 = S2$ if and only if flag is true;\\
+  (4) convergent: the number of characters in $X$;\\
+  partial correctness:\\
+  ($1 \rightarrow 2$): for any legal input, (2) always holds, since it's a tautology;\\
+  ($2 \rightarrow 3$): if $X = \Lambda$ then, $S1 = S2$ is true if and only if 
+  $Y = \Lambda$; if flag is false, then $S1 \neq S2$;\\
+  ($2 \rightarrow 2$): if $X \neq \Lambda$ and flag is true, then after carrying 
+  out the instructions $X = \text{tail}(X)$ and $Y = \text{tail}(Y)$, the same 
+  properties will still hold for the new values of $X$ and $Y$, thus the loop 
+  will continue.\\
+  total correctness:\\
+  every time the loop is executed, the convergent will get the value (convergent - 1), 
+  and it cannot be less than 0, thus the algorithm will finally terminate.\\
+  considering the proof of partial correctness, total correctness is proved.
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[DH: 5.10]
+  A palindrome is a string that is the same when read forwards and backwards. 
+  Consider the following algorithm \textsl{Pal1} for checking whether a string 
+  is a palindrome. The algorithm returns true or false, according to whether 
+  the input string \textsl{S} is a palindrome or not.\\
+  $~~~~Y \gets \text{\textbf{rev}($S$);}$\\
+  $~~~~\text{return \textbf{equal}($S, Y$).}$\\
+  (a) Prove the total correctness of \textsl{Pal1}.\\
+  (b) The termination of \textsl{Pal1} can be easily proved by relying on the 
+  termination of the functions \textbf{rev} and \textbf{equal}. Can you generalize 
+  this type of reasoning to a similar composition of any two programs?
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  (a) partial correctness: \\
+  The partial correctness of \textbf{rev} and \textbf{equal} has been proved, 
+  and \textbf{rev} returns a string, thus the partial correctness of the 
+  algorithm has been proved;\\
+  total correctness:\\
+  It has been proved that given a string, \textbf{rev} will terminate, with 
+  another string returned. And given two strings, \textbf{equal} will terminate, 
+  returning whether they are the same. So given a string, the algorithm will 
+  finally terminate, plus the partial correctness, the total correctness of 
+  the algorithm has been proved.\\
+  (b) If the output of one function could be part of legal input of another 
+  function, and they both terminate, then the new-constructed structure terminates.  
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\begin{problem}[DH: 5.12]
+  Here is another algorithm, \textsl{Pal2}, designed to perform the same task 
+  as \textsl{Pal1}, but more efficiently:\\
+  $~~~~X \gets S;$\\
+  $~~~~E \gets \text{true};$\\
+  $~~~~\text{while}~X \neq \Lambda~\text{do the following:}$\\
+  $~~~~~~~~\text{if \textbf{eq}(\textbf{head}($X$),\textbf{last}($X$)) then}~
+  X \gets \text{\textbf{all-but-last}(\textbf{tail}($X$))};$\\
+  $~~~~~~~~\text{otherwise}~E \gets \text{false}.$\\
+  $~~~~\text{return}~E.$\\
+  Unfortunately, \textbf{Pal2} is not totally correct. Prove or disprove:\\
+  (a) \textsl{Pal2} is partially correct.\\
+  (b) \textsl{Pal2} terminates on every input string \textsl{S}.
+\end{problem}
+
+\begin{solution}
+  (a) It is partially correct.\\
+  the invariant for the loop: \textsl{S} is a palindrome if and only if both 
+  $X$ is a palindrome and $E$ is true.\\
+  If $X = \Lambda$, then \textsl{S} is a palindrome if and only if $E$ is true.\\
+  If $X \neq \Lambda$, the loop will continue.\\
+  (b) It is not totally correct.\\
+  For a non-palindrome, though $E$ is false, $X$ will not get shorter, thus 
+  the loop will go on infinitely.
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}
+  证明Euclid算法的部分正确性。
+\end{problem}
+
+\begin{remark}
+  以下解答参考了博客:最大公约数(gcd):Euclid算法证明及其它\\
+  $http://www.cnblogs.com/ider/archive/2010/11/16/gcd_euclid.html$
+\end{remark}
+
+\begin{solution}
+  引理：对于任意两个整数$m$, $n$, 若$k|m$, $k|n$, 则对任意的$x, y \in \mathbb{Z}$, 
+  $k|(xm + yn)$.\\
+  令 k=gcd(m,n),则 k|m 并且 k|n;\\
+  令 j=gcd(n, m mod n), 则j|n 并且 j|(m mod n);\\
+  对于m, 可以用n 表示为 m=pn+(m mod n);\\
+  由引理可知 j|m（其中 x=p,y=1）, 又 j|n，于是 j 是 m 和 n 的公约数;\\
+  因为 k 是 m 和 n 的最大公约数，所以必有 k≥j;\\
+  通过另一种表示形式：(m mod n)=m-pn,同理可得：\\
+  k|(m mod n),又k|n，于是 k 是 (m mod n) 和 n 的公约数;\\
+  同样由 j 是 n 和 (m mod n) 的最大公约数可以得到 j≥k;\\
+  综上， k=j,\\
+  即gcd(m,n) = gcd(n, m mod n).\\
+  (1) 当$m~ mod~ n \neq 0$时，呼叫下一层；\\
+  (2) 当$m~ mod~ n = 0$时，n即最大公约数；\\
+  得证。
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+%\begincorrection	% begin the ``correction'' part (Optional)
+
+%%%%%%%%%%
+%\begin{problem}[题号]
+%  题目。
+%\end{problem}
+
+%\begin{cause}
+%  简述错误原因（可选）。
+%\end{cause}
+
+% Or use the ``solution'' environment
+%\begin{revision}
+%  正确解答。
+%\end{revision}
+%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+%\beginfb	% begin the feedback section (Optional)
+
+%你可以写：
+%\begin{itemize}
+%  \item 对课程及教师的建议与意见
+%  \item 教材中不理解的内容
+%  \item 希望深入了解的内容
+%  \item 等
+%\end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+\end{document}

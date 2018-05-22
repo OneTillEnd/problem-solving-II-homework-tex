@@ -1,0 +1,226 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: hw.tex 						   %
+% Description: LaTeX template for homework.                %
+%
+% Feel free to modify it (mainly the 'preamble' file).     %
+% Contact hfwei@nju.edu.cn (Hengfeng Wei) for suggestions. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPORTANT NOTE: Compile this file using 'XeLaTeX' (not 'PDFLaTeX') %
+%
+% If you are using TeXLive 2016 on windows,                          %
+% you may need to check the following post:                          %
+% https://tex.stackexchange.com/q/325278/23098                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper, UTF8]{ctexart}
+\input{preamble}  % modify this file if necessary
+
+%%%%%%%%%%%%%%%%%%%%
+\title{第四讲：分治法与递归}
+\me{廖玺然}{171860647}{计算机科学与技术系}
+\date{2018 年 3 月 28 日}     % you can specify a date like ``2017年9月30日''.
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+%%%%%%%%%%%%%%%%%%%%
+\noplagiarism	% always keep this
+%%%%%%%%%%%%%%%%%%%%
+\beginthishw	% begin ``this homework (hw)'' part
+
+%%%%%%%%%%
+\begin{problem}[TC: exercise 4.1-5]	% NOTE: use '[]' (instead of '()' or '{}') to provide additional information
+  Use the following ideas to develop a nonrecursive, linear-time algorithm 
+  for the maximum-subarray problem. Start at the left end of the array, and 
+  progress toward the right, keeping track of the maximum subarray seen so 
+  far. Knowing a maximum array of $A[1..j]$, extend the answer to find a 
+  maximum subarray ending at index $j+1$ by using the following observation: 
+  a maximum subarray of $A[1..j + 1]$ is either a maximum subarray of $A[1,,j]$ 
+  or a subarray $A[i..j + 1]$, for some $1 \leq i \leq j + 1$. Determine a 
+  maximum subarray of the form $A[i..j + 1]$ in constant time based on Knowing 
+  a maximum subarray ending at index $j$.
+\end{problem}
+
+% The ``remark'' environments (when needed) must be 
+% put before the ``solution''/``revision''/``proof'' environments.
+\begin{remark}	% Optional
+  以下解答参考了博客“最大子序列和问题”，网址：\\
+  https://blog.csdn.net/lingfeng2019/article/details/78672685
+\end{remark}
+
+\begin{solution}
+  $\text{int } max = 0,~tmp = 0,~cnt = 0;$\\
+  $\text{int } head[n] = \{ 0 \},~tail[n] = \{ 0 \}$\\
+  $head[0] = 1;$\\
+  $\text{for } i \text{ from } 1 \text{ to } n$\\
+  $\indent \text{input } A[i];$\\
+  $\indent tmp = A[i] + tmp;$\\
+  $\indent \text{if } tmp > max \text{ then}$\\
+  $\indent \indent max = tmp;$\\
+  $\indent \indent head[0] = head[cnt];$\\
+  $\indent \indent cnt = 0;$\\
+  $\indent \indent tail[cnt] = i;$\\
+  $\indent \text{if } tmp = max \text{ then}$\\
+  $\indent \indent tail[cnt] = i;$\\
+  $\indent \text{if } tmp < 0 \text{ then}$\\
+  $\indent \indent head[++cnt] = i + 1;$\\
+  $\text{for } i \text{ from } 0 \text{ to } cnt$\\
+  $\indent \text{output } A[head[i],..,tail[i]].$
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: exercise 4,3-3]
+  We saw that the solution of $T(n) = 2T([n/2]) + n$ is $O(n\text{ lg }n)$. 
+  Show that the solution of this recurrence is also $\Omega(n\text{ lg }n)$. 
+  Conclude that the solution is $\Theta(n\text{ lg }n)$.
+\end{problem}
+
+\begin{solution}
+  for $n = 1$, $T(1) = 1 > cn \text{lg} n = 0,$\\
+  for $2 \leq n \leq k(k \geq 2)$, assume that $T(k) \geq ck \text{lg} k$, then\\
+  for $n = k + 1$
+  \begin{align}
+      T(k + 1) & = 2T([(k + 1)/2]) + k + 1 \notag \\
+               & \geq 2c[(k + 1)/2]\text{lg}([k/2]) + k + 1 \notag \\
+               & \geq c(k + 1)\text{lg}((k + 1)/2) + k + 1 \notag \\
+               & = c(k + 1)\text{lg}(k + 1) - c(k + 1)\text{lg}2 + k + 1 \notag \\
+               & = c(k + 1)\text{lg}(k + 1) + (1 - c)(k + 1) \notag
+  \end{align}
+  for $0 < c \leq 1$, we have that $T(k + 1) \geq c(k + 1)\text{lg}(k + 1),$\\
+  so we can conclude that $T(n) = \Omega(n\text{ lg }n),$\\
+  plus the conclusion that $T(n) = O(n\text{ lg }n)$, we find that $T(n) = \Theta(n\text{ lg }n)$.
+\end{solution}
+%%%%%%%%%%
+% \newpage  % continue in a new page
+%%%%%%%%%%
+\begin{problem}[TC: exercise 4.4-2]
+  Use a recursion tree to determine a good asymptotic upper bound on the 
+  recurrence $T(n) = T(n/2) + n^{2}$. Use the substitution method to verify 
+  your answer.	
+\end{problem}
+
+% \begin{remark}	
+%   Refer to book.
+% \end{remark}
+
+\begin{solution}
+  The recursion tree would be like\\
+  \fignocaption{width = 1.0\textwidth}{figs/tree_1}
+  \begin{align}
+  g(n) & = \sum_{i = 0}^{\text{log}_{2}n - 1} \frac{1}{4^{i}}cn^{2} \notag \\
+       & = \frac{1 - \frac{1}{4}^{\text{log}_{2}n - 1}}{1 - \frac{1}{1}}cn^{2} \notag \\
+       & = \frac{4}{3}cn^{2} - \frac{16}{3}c \notag 
+  \end{align}
+  we can also use Master theorem to find this
+  \begin{align}
+      T(n) = O(n^{2}) \notag
+  \end{align}
+  verification:\\
+  for $n = 1$, $T(1) = 1 \leq cn^{2} = 1,$\\
+  for $2 \leq n \leq k(k \geq 2)$, assume that $T(k) \leq ck^{2}$, then\\
+  for $n = k + 1$
+  \begin{align}
+      T(k + 1) & = T([(k + 1)/2]) + (k + 1)^{2} \notag \\
+               & \leq c[(k + 1)/2]^{2} + (k + 1)^{2} \notag \\
+               & \leq \frac{c}{4}(k + 1)^{2} + (k + 1)^{2} \notag \\
+               & = (1 + c/4)(k + 1)^{2} \notag
+  \end{align}
+  for $0 < c \leq \frac{4}{3}$, we have that $T(k + 1) \leq c(k + 1)^{2},$\\
+  so we can conclude that $T(n) = O(n^{2}),$\\
+\end{solution}
+%%%%%%%%%%
+
+%%%%%%%%%%
+\begin{problem}[TC: exercise 4.5-3]
+  Use the master method to show that the solution to the binary-search recurrence 
+  $T(n) = T(n/2) + \Theta(1)$ is $T(n) = \Theta(\text{lg }n)$
+\end{problem}
+
+\begin{solution}
+  In this case, $a = 1,~b = 2,~f(n) = \Theta(1) = \Theta(n^{\text{log}_{b}a}),$\\
+  so $g(n) = \Theta(\text{lg }n)$, then $T(n) = \Theta(\text{lg }n)$.
+\end{solution}
+%%%%%%%%%%%
+
+%%%%%%%%%%%
+\begin{problem}[TC: problem 4.4]
+  This problem develops properties of the Fibonacci numbers, which are defined 
+  by recurrence (3.22). We shall use the technique of generating functions to 
+  solve the Fibonacci recurrence. Define the \textbf{\textsl{generating function}} 
+  (or \textbf{\textsl{formal power series}}) $\mathcal{F}$ as
+  \begin{align}
+      \mathcal{F}(z) & = \sum_{i = 0}^{\infty} F_{i}z^{i} \notag \\
+                     & = 0 + z + z^{2} + 2z^{3} + 3z^{4} + 5z^{5} + 8z^{6} 
+                     + 13z^{7} + 21z^{8} + \cdots, \notag
+  \end{align}
+  where $F_{i}$ is the $i$th Fibonacci number.\\
+  \textsl{\textbf{a.}} Show that $\mathcal{F}(z) = z + z\mathcal{F}(z) + z^{2}\mathcal{F}(z).$\\
+  \textsl{\textbf{b.}} Show that
+  \begin{align}
+      \mathcal{F}(z) & = \frac{z}{1 - z - z^{2}} \notag \\
+                     & = \frac{z}{(1 - \phi z)(1 - \hat{\phi}z)} \notag \\
+                     & = \frac{1}{\sqrt{5}}(\frac{1}{1 - \phi z} - \frac{1}{1 - \hat{\phi}z}) \notag
+  \end{align}
+  $~~~~$where\\
+  $~~~~~\phi = \frac{1 + \sqrt{5}}{2}$\\
+  $~~~~~$and\\
+  $~~~~~\hat{\phi} = \frac{1 - \sqrt{5}}{2}.$\\
+  \textsl{\textbf{c.}} Show that
+  \[ \mathcal{F}(z) = \sum_{i = 0}^{\infty} \frac{1}{\sqrt{5}}(\phi^{i} - \hat{\phi}^{i})z^{i}. \]
+  \textsl{\textbf{d.}} Use part (c) to prove that $F_{i} = \phi^{i} / \sqrt{5}$ 
+  for $i > 0$, rounded to the nearest integer. 
+\end{problem}
+
+\begin{solution}
+  a. 
+  \begin{align}
+      z \mathcal{F}(z) & = \sum_{i = 2}^{\infty} F_{i - 1}z^{i} \notag \\
+      z^{2} \mathcal{F}(z) & = \sum_{i = 3}^{\infty} F_{i - 2}z^{i} \notag \\
+      z + z \mathcal{F}(z) + z^{2} \mathcal{F}(z) & = 0 + z + z^{2} 
+      + \sum_{i = 3}^{\infty} (F_{i - 1} + F_{i - 2})z^{i} \notag \\
+                       & = 0 + z + z^{2} + \sum_{i = 3}^{\infty} F_{i}z^{i} \notag \\
+                       & = \sum_{i = 0}^{\infty} F_{i}z^{i} \notag \\
+                       & = \mathcal{F}(z) \notag
+  \end{align}
+  b. since $\mathcal{F}(z) = z + z\mathcal{F}(z) + z^{2}\mathcal{F}(z),$\\
+  $~~~~~$we have $(1 - z - z^{2})\mathcal{F}(z) = z,$\\
+  $~~~~~$so $\mathcal{F}(z) = \frac{z}{1 - z - z^{2}},$\\
+  $~~~~~$since $(1 - \phi z)(1 - \hat{\phi}z) = 1 - (\frac{1 + \sqrt{5}}{2} + \frac{1 - \sqrt{5}}{2})z 
+                + \frac{1 - 5}{4}z^{2} = 1 - z - z^{2},$\\
+  $~~~~~$and $\frac{1}{\sqrt{5}}(\frac{1}{1 - \phi z} - \frac{1}{1 - \hat{\phi}z}) 
+              = \frac{1}{\sqrt{5}} \frac{(\frac{1 + \sqrt{5}}{2} - \frac{1 - \sqrt{5}}{2})z}{(1 - \phi z)(1 - \hat{\phi}z)} 
+              = \frac{z}{(1 - \phi z)(1 - \hat{\phi}z)},$\\
+  $~~~~~$we can conclude that
+  \begin{align}
+    \mathcal{F}(z) & = \frac{z}{1 - z - z^{2}} \notag \\
+                   & = \frac{z}{(1 - \phi z)(1 - \hat{\phi}z)} \notag \\
+                   & = \frac{1}{\sqrt{5}}(\frac{1}{1 - \phi z} - \frac{1}{1 - \hat{\phi}z}) \notag
+  \end{align}
+  c. for $i \geq 3,~F_{i} = F_{i - 1} + F_{i - 2},$\\
+  $~~~~~$assume $F_{i} + kF_{i - 1} = (1 + k)(F_{i - 1} + \frac{1}{1 + k}F_{i - 2}),$\\
+  $~~~~~$let $k = \frac{1}{1 + k}$, we have $k = \frac{-1 \pm \sqrt{5}}{2}$, then we have
+  \begin{align}
+      F_{i} + \frac{-1 + \sqrt{5}}{2}F_{i - 1} & = \frac{1 + \sqrt{5}}{2}(F_{i - 1} + \frac{-1 + \sqrt{5}}{2}F_{i - 2}) \\
+      F_{i} + \frac{-1 - \sqrt{5}}{2}F_{i - 1} & = \frac{1 - \sqrt{5}}{2}(F_{i - 1} + \frac{-1 - \sqrt{5}}{2}F_{i - 2}) 
+  \end{align}
+  $~~~~~$since $F_{1} = 1,~F_{2} = 1$, we have
+  \begin{align}
+    F_{i} + \frac{-1 + \sqrt{5}}{2}F_{i - 1} & = (\frac{1 + \sqrt{5}}{2})^{i - 1} \\
+    F_{i} + \frac{-1 - \sqrt{5}}{2}F_{i - 1} & = (\frac{1 - \sqrt{5}}{2})^{i - 1}    
+  \end{align}
+  $~~~~~(3) \times \frac{1 + \sqrt{5}}{2} - (4) \times \frac{1 - \sqrt{5}}{2}$, we have
+  \begin{align}
+      F_{i} & = \frac{1}{\sqrt{5}}((\frac{1 + \sqrt{5}}{2})^{i} - (\frac{1 - \sqrt{5}}{2})^{i}) \notag \\
+            & = \frac{1}{\sqrt{5}}(\phi^{i} - \hat{\phi}^{i})
+  \end{align}
+  $~~~~~$so we can conclude that
+  \[ \mathcal{F}(z) = \sum_{i = 0}^{\infty} \frac{1}{\sqrt{5}}(\phi^{i} - \hat{\phi}^{i})z^{i}. \]
+  d. Since $|\hat{\phi}| < 1,~|\frac{1}{\sqrt{5}}\hat{\phi}^{i}| < 1/2$,\\
+  $~~~~~$So rounded to the nearest integer, $F_{i} = \phi^{i} / \sqrt{5}.$
+\end{solution}
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%
+\end{document}
